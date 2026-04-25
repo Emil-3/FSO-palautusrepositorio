@@ -6,12 +6,12 @@ const Statistics = ({good, neutral, bad}) => {
   if (all !== 0) {
     return (
       <p>
-        good {good}<br/>
-        neutral {neutral}<br/>
-        bad {bad}<br/>
-        all {all}<br/>
-        average {(good - bad) / all}<br/>
-        positive {100 * good / all} %
+        <StatisticsLine text="good" value={good} />
+        <StatisticsLine text="neutral" value={neutral} />
+        <StatisticsLine text="bad" value={bad} />
+        <StatisticsLine text="all" value={all} />
+        <StatisticsLine text="average" value={(good - bad) / all} />
+        <StatisticsLine text="positive" value={String(100 * good / all).concat(" %")} />
       </p>
     )
   }
@@ -19,6 +19,18 @@ const Statistics = ({good, neutral, bad}) => {
     <p>
       No feedback given
     </p>
+  )
+}
+
+const StatisticsLine = ({ text, value}) => (
+  <>
+    {text} {value}<br />
+  </>
+)
+
+const Button = ({ onClick, text}) => {
+  return (
+    <button onClick={onClick}>{text}</button>
   )
 }
 
@@ -30,9 +42,9 @@ const App = () => {
   return (
     <div>
       <h1>give feedback</h1>
-      <button onClick={() => setGood(good + 1)}>good</button>
-      <button onClick={() => setNeutral(neutral + 1)}>neutral</button>
-      <button onClick={() => setBad(bad + 1)}>bad</button>
+      <Button onClick={() => setGood(good + 1)} text="good"/>
+      <Button onClick={() => setNeutral(neutral + 1)} text="neutral"/>
+      <Button onClick={() => setBad(bad + 1)} text ="bad"/>
       <h1>statistics</h1>
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
