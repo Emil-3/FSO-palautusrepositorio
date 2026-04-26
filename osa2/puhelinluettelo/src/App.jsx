@@ -6,12 +6,13 @@ const Person = ({ person }) => {
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas',
-      number: '040-1231244'
-    }
-  ]) 
+    { name: 'Arto Hellas', number: '040-123456' }
+  ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [filter, setFilter] = useState('')
+
+  const filteredPersons = persons.filter(person => RegExp(`(.*)${filter.toLowerCase()}(.*)`).test(person.name.toLowerCase()))
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -19,6 +20,10 @@ const App = () => {
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
+  }
+
+  const handleFilter = (event) => {
+    setFilter(event.target.value)
   }
 
   const addPerson = (event) => {
@@ -37,6 +42,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+        filter shown with<input value={filter} onChange={handleFilter} />
+      </div>
+      <h2>add a new</h2>
       <form onSubmit={addPerson}>
         <div>
           name:<input value={newName} onChange={handleNameChange}/>
@@ -49,7 +58,7 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-        {persons.map(person => <p key={person.name}>{person.name} {person.number}</p>)}
+        {filteredPersons.map(person => <p key={person.name}>{person.name} {person.number}</p>)}
     </div>
   )
 
