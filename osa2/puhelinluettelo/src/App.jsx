@@ -38,8 +38,13 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
       return
     }
+    const personObject = { name: newName, number: newNumber }
+    axios
+      .post('http://localhost:3001/persons', personObject)
+      .then(respons => {
+      })
     const newPersons = [...persons]
-    newPersons.push({ name: newName, number: newNumber })
+    newPersons.push(personObject)
     setPersons(newPersons)
     setNewName('')
     setNewNumber('')
