@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
@@ -13,10 +13,10 @@ const App = () => {
   const filteredPersons = persons.filter(person => RegExp(`(.*)${filter.toLowerCase()}(.*)`).test(person.name.toLowerCase()))
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .receiveEvery()
+      .then(startPersons => {
+        setPersons(startPersons)
       })
   }, [])
 
@@ -39,15 +39,13 @@ const App = () => {
       return
     }
     const personObject = { name: newName, number: newNumber }
-    axios
-      .post('http://localhost:3001/persons', personObject)
-      .then(respons => {
+    personService
+      .generate(personObject)
+      .then(receivedPerson => {
+        setPersons(persons.concat(receivedPerson))
+        setNewName('')
+        setNewNumber('')
       })
-    const newPersons = [...persons]
-    newPersons.push(personObject)
-    setPersons(newPersons)
-    setNewName('')
-    setNewNumber('')
   }
 
   return (
