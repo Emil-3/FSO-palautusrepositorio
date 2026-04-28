@@ -14,4 +14,9 @@ const generate = newPerson => (
       .then(reply => reply.data)
 )
 
-export default { receiveEvery, generate }
+const remove = id => (
+  axios
+    .delete(`${URL}/${id}`)
+)
+
+export default { receiveEvery, generate, remove }
