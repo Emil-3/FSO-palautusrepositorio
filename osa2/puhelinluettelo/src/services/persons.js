@@ -19,4 +19,10 @@ const remove = id => (
     .delete(`${URL}/${id}`)
 )
 
-export default { receiveEvery, generate, remove }
+const replace = personObject => (
+  axios
+    .put(`${URL}/${personObject.id}`, personObject)
+    .then(reply => reply.data)
+)
+
+export default { receiveEvery, generate, remove, replace }
