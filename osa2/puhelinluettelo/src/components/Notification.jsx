@@ -1,8 +1,8 @@
-const Notification = ({ info }) => {
+const Notification = ({ info, color }) => {
     const notificationStyle = {
-        color: 'rgb(0,160,0)',
+        color: color,
         fontSize: '200%',
-        border: '4px solid rgb(0,160,0)',
+        border: `4px solid ${color}`,
         borderRadius: '8px',
         padding: '10px',
         backgroundColor: 'rgb(210,210,210)',

@@ -11,6 +11,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [notification, setNotification] = useState(null)
+  const [notificationColor, setNotificationColor] = useState('green')
 
   const filteredPersons = persons.filter(person => RegExp(`(.*)${filter.toLowerCase()}(.*)`).test(person.name.toLowerCase()))
 
@@ -51,6 +52,13 @@ const App = () => {
       .then(receivedPerson =>
         setPersons(persons.map(person => person.id === receivedPerson.id ? receivedPerson : person))
       )
+      .catch(error => {
+        notify(`Information of ${newName} has already been removed from the server`, 5000, 'red')
+        setPersons(persons.filter(person => person.name !== newName))
+        setNewName('')
+        setNewNumber('')
+        return
+      })
     notify(`${newName}'s number updated`, 5000)
     setNewName('')
     setNewNumber('')
@@ -75,7 +83,8 @@ const App = () => {
       })
   }
 
-  const notify = (info, time) => {
+  const notify = (info, time, color='green') => {
+    setNotificationColor(color)
     setNotification(info)
     setTimeout(() => {
         setNotification(null)
@@ -85,7 +94,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification info={notification} />
+      <Notification info={notification} color={notificationColor} />
       <Filter filter={filter} onChange={handleFilter} />
       <h3>add a new</h3>
       <PersonForm onSubmit={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
