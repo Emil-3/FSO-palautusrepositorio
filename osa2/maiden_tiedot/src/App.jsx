@@ -6,6 +6,7 @@ import Country from './components/Country'
 
 const App = () => {
   const [countries, setCountries] = useState([])
+  const [country, setCountry] = useState(null)
   const [filter, setFilter] = useState("")
 
   useEffect(() => {
@@ -14,17 +15,24 @@ const App = () => {
 
   const handleFilter = (event) => {
     setFilter(event.target.value)
+    const fc = filteredCountries(event.target.value)
+    setCountry( fc.length === 1 ? fc[0] : null)
   }
 
-  const filteredCountries = () => (
-    countries.filter(country => RegExp(`(.*)${filter.toLowerCase()}(.*)`).test(country.name.common.toLowerCase()))
+  const showCountry = (country) => {
+    setFilter("")
+    setCountry(country)
+  }
+
+  const filteredCountries = (fil=filter) => (
+    countries.filter(country => RegExp(`(.*)${fil.toLowerCase()}(.*)`).test(country.name.common.toLowerCase()))
   )
 
   return (
     <div>
       <Filter filter={filter} onChange={handleFilter} />
-      <Countries countries={filteredCountries()} />
-      <Country country={filteredCountries().length === 1 ? filteredCountries()[0] : null} />
+      <Countries countries={filteredCountries()} showCountry={showCountry} country={country} />
+      <Country country={country} />
     </div>
   )
 }
