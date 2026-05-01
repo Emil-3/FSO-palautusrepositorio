@@ -50,5 +50,10 @@ app.get('/info', (req, res) => {
     )
 })
 
+app.delete('/api/persons/:id', (req, res) => {
+    phoneNumberInfo = phoneNumberInfo.filter(person => person.id !== req.params.id)
+    res.status(204).end()
+})
+
 const PORT = 3001
 app.listen(PORT)
