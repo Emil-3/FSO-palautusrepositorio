@@ -24,8 +24,25 @@ let phoneNumberInfo = [
     }
 ]
 
+app.use(express.json())
+
+const createID = () => (
+    String(Math.floor(Math.random() * 10**9))
+)
+
 app.get('/api/persons', (req, res) => {
     res.json(phoneNumberInfo)
+})
+
+app.post('/api/persons', (req,res) => {
+    const body = req.body
+    const person = {
+        id: createID(),
+        name: req.body.name,
+        number: req.body.number
+    }
+    phoneNumberInfo = phoneNumberInfo.concat(person)
+    res.json(person)
 })
 
 app.get('/api/persons/:id', (req, res) => {
