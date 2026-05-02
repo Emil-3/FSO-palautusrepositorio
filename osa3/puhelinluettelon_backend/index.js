@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 let phoneNumberInfo = [
@@ -25,6 +26,7 @@ let phoneNumberInfo = [
 ]
 
 app.use(express.json())
+app.use(morgan('tiny'))
 
 const createID = () => (
     String(Math.floor(Math.random() * 10**9))
