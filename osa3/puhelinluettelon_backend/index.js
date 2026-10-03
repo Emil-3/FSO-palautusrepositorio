@@ -32,10 +32,6 @@ app.use(express.json())
 morgan.token('data', (req, res) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 
-const createID = () => (
-    String(Math.floor(Math.random() * 10**9))
-)
-
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(people => {
         res.json(people)
@@ -56,19 +52,13 @@ app.post('/api/persons', (req,res) => {
         })
         return
     }
-    if (phoneNumberInfo.map(info => info.name).includes(body.name)) {
-        res.status(400).json({
-            error: 'name must be unique'
-        })
-        return
-    }
-    const person = {
-        id: createID(),
-        name: req.body.name,
-        number: req.body.number
-    }
-    phoneNumberInfo = phoneNumberInfo.concat(person)
-    res.json(person)
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
+    person.save().then(sPerson => {
+        res.json(sPerson)
+    })
 })
 
 app.get('/api/persons/:id', (req, res) => {
