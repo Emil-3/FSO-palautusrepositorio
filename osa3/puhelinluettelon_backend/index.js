@@ -84,8 +84,14 @@ app.get('/info', (req, res) => {
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-    phoneNumberInfo = phoneNumberInfo.filter(person => person.id !== req.params.id)
-    res.status(204).end()
+    Person.findByIdAndDelete(req.params.id)
+        .then(r => {
+            res.status(204).end()
+        })
+        .catch(error => {
+            console.log(error)
+            res.status(400).send({ error: 'incorrectly formatted id'})
+        })
 })
 
 const PORT = process.env.PORT || 3001
