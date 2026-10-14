@@ -4,6 +4,12 @@ const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery', false)
 mongoose.connect(url, { family: 4})
+    .then(r => {
+        console.log('database connected successfully')
+    })
+    .catch(error => {
+        console.log('database connection error:', error.message)
+    })
 
 const personSchema = new mongoose.Schema({
     name: String,
