@@ -71,6 +71,21 @@ app.get('/api/persons/:id', (req, res) => {
     }
 })
 
+app.put('/api/persons/:id', (req, res, next) => {
+    const number = req.body.number
+    Person.findById(req.params.id)
+        .then(person => {
+            if (!person) {
+                return res.status(404).end()
+            }
+            person.number = number
+            return person.save().then(rPerson => {
+                res.json(rPerson)
+            })
+        })
+        .catch(error => next(error))
+})
+
 app.get('/info', (req, res) => {
     res.send(
         `<div>
