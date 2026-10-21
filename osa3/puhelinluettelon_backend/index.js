@@ -4,29 +4,6 @@ const Person = require('./models/person')
 const morgan = require('morgan')
 const app = express()
 
-let phoneNumberInfo = [
-    {
-        id: '1',
-        name: 'Arto Hellas',
-        number: '040-132456'
-    },
-    {
-        id: '2',
-        name: 'Ada Lovelace',
-        number: '39-44-5323523'
-    },
-    {
-        id: '3',
-        name: 'Dan Abramov',
-        number: '12-43-234345'
-    },
-    {
-        id: '4',
-        name: 'Mary Poppendieck',
-        number: '39-23-6423122'
-    }
-]
-
 app.use(express.static('dist'))
 app.use(express.json())
 morgan.token('data', (req, res) => JSON.stringify(req.body))
@@ -61,14 +38,16 @@ app.post('/api/persons', (req,res) => {
     })
 })
 
-app.get('/api/persons/:id', (req, res) => {
-    const id = req.params.id
-    const person = phoneNumberInfo.find(person => person.id === id)
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).end()
-    }
+app.get('/api/persons/:id', (req, res, next) => {
+    Person.findById(req.params.id)
+        .then(person => {
+            if (person) {
+                res.json(person)
+            } else {
+                res.status(404).end()
+            }
+        })
+        .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
@@ -87,15 +66,17 @@ app.put('/api/persons/:id', (req, res, next) => {
 })
 
 app.get('/info', (req, res) => {
-    res.send(
-        `<div>
-            Phonebook has info for ${phoneNumberInfo.length} people
-        </div>
-        <br>
-        <div>
-            ${Date(Date.now())}
-        </div>`
-    )
+    Person.find({}).then(people => {
+        res.send(
+            `<div>
+                Phonebook has info for ${people.length} people
+            </div>
+            <br>
+            <div>
+                ${Date(Date.now())}
+            </div>`
+        )
+    })
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
