@@ -81,6 +81,9 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        notify(error.response.data.error, 5000, 'red')
+      })
   }
 
   const notify = (info, time, color='green') => {
