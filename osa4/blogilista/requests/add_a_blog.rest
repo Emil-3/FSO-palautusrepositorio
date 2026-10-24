@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+      "title": "Cats and dogs",
+      "author": "Jack Jackson",
+      "url": "https://www.jaja.com/cats_and_dogs",
+      "likes": 10
+}
