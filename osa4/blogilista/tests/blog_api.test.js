@@ -61,6 +61,32 @@ describe('without any initial blogs', () => {
 
         assert.strictEqual((await helper.blogsInDB())[0].likes, 0)
     })
+
+    test('the status code 400 is received when the title is missing when adding a blog', async () => {
+        const newBlog = {
+            author: "Michael Chan",
+            url: "https://reactpatterns.com/",
+            likes: 7
+        }
+
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(400)
+    })
+
+    test('the status code 400 is received when the url is missing when adding a blog', async () => {
+        const newBlog = {
+            title: "React patterns",
+            author: "Michael Chan",
+            likes: 7
+        }
+
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(400)
+    })
 })
 
 after(async () => {
