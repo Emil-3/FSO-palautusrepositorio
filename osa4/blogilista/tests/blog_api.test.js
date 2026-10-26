@@ -22,6 +22,23 @@ describe('with multiple initial blogs', () => {
     test('the id field is correctly named', async () => {
         assert((await api.get('/api/blogs')).body[0].hasOwnProperty('id'))
     })
+
+    test('adding a blog increases the amount of blogs in the db by one', async () => {
+        const newBlog = {
+            title: "React patterns",
+            author: "Michael Chan",
+            url: "https://reactpatterns.com/",
+            likes: 7
+        }
+
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(201)
+          .expect('Content-Type', /application\/json/)
+
+        assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length + 1)
+    })
 })
 
 after(async () => {
