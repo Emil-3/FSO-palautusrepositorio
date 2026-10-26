@@ -41,6 +41,28 @@ describe('with multiple initial blogs', () => {
     })
 })
 
+describe('without any initial blogs', () => {
+    beforeEach(async () => {
+        await Blog.deleteMany()
+    })
+
+    test('the likes field becomes zero when it is not given a value when adding a blog', async () => {
+        const newBlog = {
+            title: "React patterns",
+            author: "Michael Chan",
+            url: "https://reactpatterns.com/"
+        }
+
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(201)
+          .expect('Content-Type', /application\/json/)
+
+        assert.strictEqual((await helper.blogsInDB())[0].likes, 0)
+    })
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
