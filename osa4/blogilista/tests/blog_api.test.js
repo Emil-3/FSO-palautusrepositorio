@@ -18,6 +18,10 @@ describe('with multiple initial blogs', () => {
         const response = await api.get('/api/blogs')
         assert.strictEqual(response.body.length, helper.blogs.length)
     })
+
+    test('the id field is correctly named', async () => {
+        assert((await api.get('/api/blogs')).body[0].hasOwnProperty('id'))
+    })
 })
 
 after(async () => {
