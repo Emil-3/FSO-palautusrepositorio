@@ -45,6 +45,14 @@ describe('with multiple initial blogs', () => {
         await api
           .delete(`/api/blogs/${blogToDelete.id}`)
 
+        assert.strictEqual((await helper.blogsInDB()).filter((blog) => blog.id === blogToDelete.id).length, 0)
+    })
+
+    test('deleting a blog reduces the amount of blogs in the database by one', async () => {
+        const blogToDelete = (await api.get('/api/blogs')).body[0]
+        await api
+          .delete(`/api/blogs/${blogToDelete.id}`)
+
         assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length - 1)
     })
 
