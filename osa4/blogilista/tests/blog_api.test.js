@@ -47,6 +47,38 @@ describe('with multiple initial blogs', () => {
 
         assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length - 1)
     })
+
+    test('a blog can be modified', async () => {
+        const blogToModify = (await api.get('/api/blogs')).body[0]
+        const newBlog = {
+            title: "Cats",
+            author: "Matt Mattson",
+            url: "https://Cs.com/",
+            likes: 123456
+        }
+        await api
+          .put(`/api/blogs/${blogToModify.id}`)
+          .send(newBlog)
+        const modifiedBlog = (await helper.blogsInDB()).filter((blog) => blog.id === blogToModify.id)[0]
+        assert(modifiedBlog.title === newBlog.title)
+        assert(modifiedBlog.author === newBlog.author)
+        assert(modifiedBlog.url === newBlog.url)
+        assert(modifiedBlog.likes === newBlog.likes)
+    })
+
+    test('modifying a blog does not change the amount of blogs in the database', async () => {
+        const blogToModify = (await api.get('/api/blogs')).body[0]
+        const newBlog = {
+            title: "Cats",
+            author: "Matt Mattson",
+            url: "https://Cs.com/",
+            likes: 123456
+        }
+        await api
+          .put(`/api/blogs/${blogToModify.id}`)
+          .send(newBlog)
+        assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length)
+    })
 })
 
 describe('without any initial blogs', () => {
