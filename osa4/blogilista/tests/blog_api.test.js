@@ -39,6 +39,14 @@ describe('with multiple initial blogs', () => {
 
         assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length + 1)
     })
+
+    test('a blog can be deleted', async () => {
+        const blogToDelete = (await api.get('/api/blogs')).body[0]
+        await api
+          .delete(`/api/blogs/${blogToDelete.id}`)
+
+        assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length - 1)
+    })
 })
 
 describe('without any initial blogs', () => {
