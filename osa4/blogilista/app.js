@@ -15,6 +15,8 @@ const errorHandler = (error, req, res, next) => {
     console.log(error.message)
     if (error.name === 'ValidationError') {
         return res.status(400).json({ error: error.message })
+    } else if (error.name === 'MongoServerError' && error.message.includes('duplicate key error')) {
+        return res.status(400).json({ error: 'username is not unique' })
     }
     next(error)
 }
