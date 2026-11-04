@@ -46,6 +46,19 @@ describe('without initial users', () => {
         assert.strictEqual((await helper.usersInDB()).length, 0)
     })
 
+    test('a user without a username cannot be created', async () => {
+        const newUser = {
+            password: 'passy',
+            name: 'Jack Jackson'
+        }
+        const res = await api
+          .post('/api/users')
+          .send(newUser)
+          .expect(400)
+        assert(/`username` is required/.test(res.body.error))
+        assert.strictEqual((await helper.usersInDB()).length, 0)
+    })
+
     test('a user with a too short password cannot be created', async () => {
         const newUser = {
             username: 'Jacky',
@@ -57,6 +70,19 @@ describe('without initial users', () => {
           .send(newUser)
           .expect(400)
         assert(/the password has to be at least three characters/.test(res.body.error))
+        assert.strictEqual((await helper.usersInDB()).length, 0)
+    })
+
+    test('a user without a password cannot be created', async () => {
+        const newUser = {
+            username: 'Jacky',
+            name: 'Jack Jackson'
+        }
+        const res = await api
+          .post('/api/users')
+          .send(newUser)
+          .expect(400)
+        assert.strictEqual(res.body.error, 'a password is required')
         assert.strictEqual((await helper.usersInDB()).length, 0)
     })
 })
