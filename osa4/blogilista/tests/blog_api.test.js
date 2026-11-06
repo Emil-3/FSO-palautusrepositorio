@@ -4,6 +4,7 @@ const { test, beforeEach, describe, after } = require('node:test')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
 
 const api = supertest(app)
@@ -12,6 +13,8 @@ describe('with multiple initial blogs', () => {
     beforeEach(async () => {
         await Blog.deleteMany()
         await Blog.insertMany(helper.blogs)
+        await User.deleteMany()
+        await User.insertOne(helper.initialUserInDB)
     })
 
     test('the correct amount of blogs is returned', async () => {
@@ -33,6 +36,7 @@ describe('with multiple initial blogs', () => {
 
         await api
           .post('/api/blogs')
+          .set('Authorization', `Bearer ${helper.getToken(helper.initialUserInDB)}`)
           .send(newBlog)
           .expect(201)
           .expect('Content-Type', /application\/json/)
@@ -40,10 +44,27 @@ describe('with multiple initial blogs', () => {
         assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length + 1)
     })
 
+    test('adding a blog without a token does not affect the amount of blogs in the db', async () => {
+        const newBlog = {
+            title: "React patterns",
+            author: "Michael Chan",
+            url: "https://reactpatterns.com/",
+            likes: 7
+        }
+
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(401)
+
+        assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length)
+    })
+
     test('a blog can be deleted', async () => {
         const blogToDelete = (await api.get('/api/blogs')).body[0]
         await api
           .delete(`/api/blogs/${blogToDelete.id}`)
+          .set('Authorization', `Bearer ${helper.getToken(helper.initialUserInDB)}`)
 
         assert.strictEqual((await helper.blogsInDB()).filter((blog) => blog.id === blogToDelete.id).length, 0)
     })
@@ -52,6 +73,7 @@ describe('with multiple initial blogs', () => {
         const blogToDelete = (await api.get('/api/blogs')).body[0]
         await api
           .delete(`/api/blogs/${blogToDelete.id}`)
+          .set('Authorization', `Bearer ${helper.getToken(helper.initialUserInDB)}`)
 
         assert.strictEqual((await helper.blogsInDB()).length, helper.blogs.length - 1)
     })
@@ -103,6 +125,7 @@ describe('without any initial blogs', () => {
 
         await api
           .post('/api/blogs')
+          .set('Authorization', `Bearer ${helper.getToken(helper.initialUserInDB)}`)
           .send(newBlog)
           .expect(201)
           .expect('Content-Type', /application\/json/)
@@ -119,6 +142,7 @@ describe('without any initial blogs', () => {
 
         await api
           .post('/api/blogs')
+          .set('Authorization', `Bearer ${helper.getToken(helper.initialUserInDB)}`)
           .send(newBlog)
           .expect(400)
     })
@@ -132,6 +156,7 @@ describe('without any initial blogs', () => {
 
         await api
           .post('/api/blogs')
+          .set('Authorization', `Bearer ${helper.getToken(helper.initialUserInDB)}`)
           .send(newBlog)
           .expect(400)
     })
