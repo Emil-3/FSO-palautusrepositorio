@@ -2,24 +2,24 @@ const jsonWT = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const userExtractor = require('../utils/middleware').userExtractor
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1})
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
-  const deToken = jsonWT.verify(request.token, process.env.SECRET)
-  if (!deToken.id) {
+blogsRouter.post('/', userExtractor, async (request, response) => {
+  if (!request.user) {
     return response.status(401).json({ error: 'the token is not valid' })
   }
-  const user = await User.findById(deToken.id)
+  const user = await User.findById(request.user)
   if (!user) {
     return response.status(400).json({ error: 'the userID is invalid or missing' })
   }
   const blog = new Blog(request.body)
   blog.likes = blog.likes || 0
-  blog.user = deToken.id
+  blog.user = request.user
   const rBlog = await blog.save()
   user.blogs = user.blogs.concat(rBlog.id)
   await user.save()
@@ -40,13 +40,12 @@ blogsRouter.put('/:id', async (request, response) => {
   response.json(modifiedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-  const deToken = jsonWT.verify(request.token, process.env.SECRET)
-  if (!deToken.id) {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
+  if (!request.user) {
     return response.status(401).json({ error: 'the token is not valid' })
   }
   const blog = await Blog.findById(request.params.id)
-  if (!blog || (blog.user.toString() !== deToken.id.toString())) {
+  if (!blog || (blog.user.toString() !== request.user.toString())) {
     return response.status(401).json({ error: 'the blog does not exist or the user is incorrect' })
   }
   await Blog.findByIdAndDelete(request.params.id)
