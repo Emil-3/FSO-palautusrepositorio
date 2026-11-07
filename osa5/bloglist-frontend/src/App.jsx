@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageColor, setMessageColor] = useState('green')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -36,7 +39,9 @@ const App = () => {
       blogService.setToken(user.token)
       setPassword('')
       setUsername('')
+      notify('you have been logged in')
     } catch (e) {
+      notify('wrong username or password', 'red')
     }
   }
 
@@ -44,6 +49,7 @@ const App = () => {
     setUser(null)
     window.localStorage.removeItem('loggedUser')
     blogService.removeToken()
+    notify('you have been logged out')
   }
 
   const handleBlogCreation = async e => {
@@ -51,17 +57,28 @@ const App = () => {
     try {
       const createdBlog = await blogService.create({ title, author, url })
       setBlogs(blogs.concat(createdBlog))
+      notify(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
       setTitle('')
       setAuthor('')
       setUrl('')
     } catch (e) {
+      notify('the blog could not be created', 'red')
     }
+  }
+
+  const notify = (message, color='green', time=4000) => {
+      setMessageColor(color)
+      setMessage(message)
+      setTimeout(() => {
+        setMessage(null)
+      }, time)
   }
 
   if (user === null) {
     return (
       <div>
         <h2>log in to application</h2>
+        {message && <Notification message={message} color={messageColor} />}
         <form onSubmit={handleLogin}>
           <div>
             <label>
@@ -93,6 +110,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      {message && <Notification message={message} color={messageColor} />}
       <p>
         {user.name} logged in
         <button onClick={handleLogout}>logout</button>
