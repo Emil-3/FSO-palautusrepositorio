@@ -63,6 +63,12 @@ const App = () => {
     }
   }
 
+  const handleLike = async blog => {
+    const newBlog = await blogService.modify({ ...blog, likes: blog.likes + 1 })
+    const newBlogWithUser = {...newBlog, user: blog.user}
+    setBlogs(blogs.map(b => b.id === newBlogWithUser.id ? newBlogWithUser : b))
+  }
+
   const notify = (message, color='green', time=4000) => {
       setMessageColor(color)
       setMessage(message)
@@ -116,7 +122,7 @@ const App = () => {
         <BlogForm createBlog={handleBlogCreation} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
       )}
     </div>
   )

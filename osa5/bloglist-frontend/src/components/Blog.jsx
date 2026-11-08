@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleLike }) => {
   const [allVisible, setAllVisible] = useState(false)
   const showWhenAllVisible = { display: allVisible ? '' : 'none' }
   const blogStyle = {
@@ -17,7 +17,7 @@ const Blog = ({ blog }) => {
         {blog.title} {blog.author} <button onClick={() => setAllVisible(!allVisible)}>{allVisible ? 'hide' : 'view'}</button>
         <div style={showWhenAllVisible}>
           {blog.url}<br />
-          likes {blog.likes}<button>like</button><br />
+          likes {blog.likes}<button onClick={() => handleLike(blog)}>like</button><br />
           {blog.user.name}
         </div>
       </div>
