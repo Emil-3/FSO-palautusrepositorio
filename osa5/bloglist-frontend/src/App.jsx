@@ -70,11 +70,11 @@ const App = () => {
   }
 
   const notify = (message, color='green', time=4000) => {
-      setMessageColor(color)
-      setMessage(message)
-      setTimeout(() => {
-        setMessage(null)
-      }, time)
+    setMessageColor(color)
+    setMessage(message)
+    setTimeout(() => {
+      setMessage(null)
+    }, time)
   }
 
   const removeBlog = async id => {
