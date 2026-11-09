@@ -40,12 +40,12 @@ const App = () => {
       setPassword('')
       setUsername('')
       notify('you have been logged in')
-    } catch (e) {
+    } catch {
       notify('wrong username or password', 'red')
     }
   }
 
-  const handleLogout = e => {
+  const handleLogout = () => {
     setUser(null)
     window.localStorage.removeItem('loggedUser')
     blogService.removeToken()
@@ -58,7 +58,7 @@ const App = () => {
       setBlogs(blogs.concat(createdBlog))
       notify(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
       blogFormRef.current.toggleVisibility()
-    } catch (e) {
+    } catch {
       notify('the blog could not be created', 'red')
     }
   }
@@ -82,7 +82,7 @@ const App = () => {
       await blogService.remove(id)
       setBlogs(blogs.filter(blog => blog.id !== id))
       notify('blog deleted')
-    } catch (e) {
+    } catch {
       notify('the blog could not be deleted', 'red')
     }
   }
