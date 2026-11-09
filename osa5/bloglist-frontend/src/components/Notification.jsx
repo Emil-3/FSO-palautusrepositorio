@@ -8,7 +8,7 @@ const Notification = ({ message, color }) => {
     borderRadius: '7px',
     backgroundColor: 'rgb(200,200,200)'
   }
-    
+
   return (
     <div style={style}>
       {message}

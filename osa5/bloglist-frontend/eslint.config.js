@@ -28,7 +28,15 @@ export default [
         'warn',
         { allowConstantExport: true }
       ],
-      indent: ['error', 2]
+      indent: ['error', 2],
+      'linebreak-style': ['error', 'unix'],
+      'no-console': 'off',
+      semi: ['error', 'never'],
+      eqeqeq: 'error',
+      'object-curly-spacing': ['error', 'always'],
+      'arrow-spacing': ['error', { before: true, after: true }],
+      'no-trailing-spaces': 'error',
+      quotes: ['error', 'single']
     }
   }
 ]
