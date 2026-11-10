@@ -38,5 +38,13 @@ export default [
       'no-trailing-spaces': 'error',
       quotes: ['error', 'single']
     }
+  },
+  {
+    files: ['**/*.test.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest
+      }
+    }
   }
 ]
