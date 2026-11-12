@@ -37,4 +37,27 @@ describe('Blog app', () => {
       await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
     })
   })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await page.getByLabel('username').fill('mluukkai')
+      await page.getByLabel('password').fill('salainen')
+      await page.getByRole('button', { name: 'login'} ).click()
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await page.getByRole('button', { name: 'create new blog' }).click();
+      await page.getByRole('textbox', { name: 'title:' }).fill('Dogs');
+      await page.getByRole('textbox', { name: 'author:' }).fill('Jack Jackson');
+      await page.getByRole('textbox', { name: 'url:' }).fill('dogs.com');
+      await page.getByRole('button', { name: 'create' }).click();
+      await expect(page.getByText('Dogs Jack Jackson')).toBeVisible()
+      await expect(page.getByText('a new blog Dogs by Jack Jackson added')).toBeVisible()
+      await page.getByRole('button', { name: 'view' }).click();
+      const blogLocator = page.getByText('Dogs Jack Jackson hidedogs.')
+      await expect(blogLocator).toContainText('dogs.com')
+      await expect(blogLocator).toContainText('likes 0')
+      await expect(blogLocator).toContainText('Matti Luukkainen')
+    })
+  })
 })
