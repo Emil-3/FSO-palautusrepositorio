@@ -84,6 +84,24 @@ describe('Blog app', () => {
         await expect(page.getByText('blog deleted')).toBeVisible()
         await expect(page.getByText('Dogs Jack Jackson')).not.toBeVisible()
       })
+
+      test('only the user who added the blog can see the remove button', async ({ page, request }) => {
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByRole('button', { name: 'remove' })).toBeVisible()
+        await page.getByRole('button', { name: 'logout' }).click()
+        await request.post('http://localhost:3003/api/users', {
+          data: {
+            name: 'Jukka Jukkalainen',
+            username: 'jJukkala',
+            password: 'secret'
+          }
+        })
+        await page.getByLabel('username').fill('jJukkala')
+        await page.getByLabel('password').fill('secret')
+        await page.getByRole('button', { name: 'login'} ).click()
+        await page.getByRole('button', { name: 'view' }).click()
+        await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
+      })
     })
   })
 })
