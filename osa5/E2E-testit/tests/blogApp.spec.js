@@ -59,5 +59,21 @@ describe('Blog app', () => {
       await expect(blogLocator).toContainText('likes 0')
       await expect(blogLocator).toContainText('Matti Luukkainen')
     })
+
+    describe('and a blog has been created', () => {
+      beforeEach(async ({ page }) => {
+        await page.getByRole('button', { name: 'create new blog' }).click()
+        await page.getByRole('textbox', { name: 'title:' }).fill('Dogs')
+        await page.getByRole('textbox', { name: 'author:' }).fill('Jack Jackson')
+        await page.getByRole('textbox', { name: 'url:' }).fill('dogs.com')
+        await page.getByRole('button', { name: 'create' }).click()
+      })
+
+      test('a blog can be liked', async ({ page }) => {
+        await page.getByRole('button', { name: 'view' }).click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await expect(page.getByText('likes 1')).toBeVisible()
+      })
+    })
   })
 })
