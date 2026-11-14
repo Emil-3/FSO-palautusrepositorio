@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, Route, Routes, useNavigate } from 'react-router-dom'
+import { Link, Route, Routes, useNavigate, useMatch } from 'react-router-dom'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -15,6 +15,9 @@ const App = () => {
   const [messageColor, setMessageColor] = useState('green')
   const navi = useNavigate()
   const pad = { padding: 8 }
+
+  const match = useMatch('/blogs/:id')
+  const blog = match ? blogs.find(b => b.id === match.params.id) : null
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -102,9 +105,13 @@ const App = () => {
           <div>
             <h2>blogs</h2>
             {message && <Notification message={message} color={messageColor} />}
-            {blogs.sort((blogA, blogB) => blogB.likes - blogA.likes).map(blog =>
-              <Blog key={blog.id} blog={blog} handleLike={handleLike} username={user ? user.username : null} removeBlog={removeBlog} />
-            )}
+            <ul>
+              {blogs.sort((blogA, blogB) => blogB.likes - blogA.likes).map(blog =>
+                <li key={blog.id}>
+                  <Link to={`/blogs/${blog.id}`}>{`${blog.title} by ${blog.author}`}</Link>
+                </li>
+              )}
+            </ul>
           </div>
         } />
         <Route path='/login' element={
@@ -135,6 +142,9 @@ const App = () => {
               <button type='submit'>login</button>
             </form>
           </div>
+        } />
+        <Route path='/blogs/:id' element={
+          <Blog blog={blog} handleLike={handleLike} username={user ? user.username : null} removeBlog={removeBlog} />
         } />
       </Routes>
     </div>
