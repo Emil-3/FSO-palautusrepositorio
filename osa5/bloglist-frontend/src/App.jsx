@@ -63,6 +63,7 @@ const App = () => {
       let createdBlog = await blogService.create(blogObj)
       createdBlog.user = { id: createdBlog.user, username: user.username, name: user.name }
       setBlogs(blogs.concat(createdBlog))
+      navi('/')
       notify(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
     } catch {
       notify('the blog could not be created', 'red')
@@ -87,6 +88,7 @@ const App = () => {
     try {
       await blogService.remove(id)
       setBlogs(blogs.filter(blog => blog.id !== id))
+      navi('/')
       notify('blog deleted')
     } catch {
       notify('the blog could not be deleted', 'red')
@@ -98,6 +100,7 @@ const App = () => {
       <div>
         <Link style={pad} to='/'>blogs</Link>
         {!user && <Link style={pad} to='/login'>login</Link>}
+        {user && <Link style={pad} to='/create'>create</Link>}
         {user && <button onClick={handleLogout}>logout</button>}
       </div>
       <Routes>
@@ -112,6 +115,12 @@ const App = () => {
                 </li>
               )}
             </ul>
+          </div>
+        } />
+        <Route path='/create' element={
+          <div>
+            {message && <Notification message={message} color={messageColor} />}
+            <BlogForm createBlog={handleBlogCreation} />
           </div>
         } />
         <Route path='/login' element={
