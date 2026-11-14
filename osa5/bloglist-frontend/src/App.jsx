@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
+import { Link, Route, Routes, useNavigate } from 'react-router-dom'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -13,7 +13,8 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState(null)
   const [messageColor, setMessageColor] = useState('green')
-  const blogFormRef = useRef()
+  const navi = useNavigate()
+  const pad = { padding: 8 }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -39,6 +40,7 @@ const App = () => {
       blogService.setToken(user.token)
       setPassword('')
       setUsername('')
+      navi('/')
       notify('you have been logged in')
     } catch {
       notify('wrong username or password', 'red')
@@ -49,6 +51,7 @@ const App = () => {
     setUser(null)
     window.localStorage.removeItem('loggedUser')
     blogService.removeToken()
+    navi('/')
     notify('you have been logged out')
   }
 
@@ -58,7 +61,6 @@ const App = () => {
       createdBlog.user = { id: createdBlog.user, username: user.username, name: user.name }
       setBlogs(blogs.concat(createdBlog))
       notify(`a new blog ${createdBlog.title} by ${createdBlog.author} added`)
-      blogFormRef.current.toggleVisibility()
     } catch {
       notify('the blog could not be created', 'red')
     }
@@ -88,53 +90,53 @@ const App = () => {
     }
   }
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>log in to application</h2>
-        {message && <Notification message={message} color={messageColor} />}
-        <form onSubmit={handleLogin}>
-          <div>
-            <label>
-              username
-              <input
-                type='text'
-                value={username}
-                onChange={({ target }) => setUsername(target.value)}
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              password
-              <input
-                type='password'
-                value={password}
-                onChange={({ target }) => setPassword(target.value)}
-              />
-            </label>
-          </div>
-          <button type='submit'>login</button>
-        </form>
-      </div>
-    )
-  }
-
-
   return (
     <div>
-      <h2>blogs</h2>
-      {message && <Notification message={message} color={messageColor} />}
-      <p>
-        {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
-      </p>
-      <Togglable buttonLabel='create new blog' ref={blogFormRef}>
-        <BlogForm createBlog={handleBlogCreation} />
-      </Togglable>
-      {blogs.sort((blogA, blogB) => blogB.likes - blogA.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} username={user.username} removeBlog={removeBlog} />
-      )}
+      <div>
+        <Link style={pad} to='/'>blogs</Link>
+        {!user && <Link style={pad} to='/login'>login</Link>}
+        {user && <button onClick={handleLogout}>logout</button>}
+      </div>
+      <Routes>
+        <Route path='/' element={
+          <div>
+            <h2>blogs</h2>
+            {message && <Notification message={message} color={messageColor} />}
+            {blogs.sort((blogA, blogB) => blogB.likes - blogA.likes).map(blog =>
+              <Blog key={blog.id} blog={blog} handleLike={handleLike} username={user ? user.username : null} removeBlog={removeBlog} />
+            )}
+          </div>
+        } />
+        <Route path='/login' element={
+          <div>
+            <h2>Log in to application</h2>
+            {message && <Notification message={message} color={messageColor} />}
+            <form onSubmit={handleLogin}>
+              <div>
+                <label>
+                  username
+                  <input
+                    type='text'
+                    value={username}
+                    onChange={({ target }) => setUsername(target.value)}
+                  />
+                </label>
+              </div>
+              <div>
+                <label>
+                  password
+                  <input
+                    type='password'
+                    value={password}
+                    onChange={({ target }) => setPassword(target.value)}
+                  />
+                </label>
+              </div>
+              <button type='submit'>login</button>
+            </form>
+          </div>
+        } />
+      </Routes>
     </div>
   )
 }
