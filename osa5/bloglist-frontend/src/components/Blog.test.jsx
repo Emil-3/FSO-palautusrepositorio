@@ -51,4 +51,31 @@ describe('<Blog />', () => {
     await user.click(likeButton)
     expect(handleLike.mock.calls).toHaveLength(2)
   })
+
+  test('the correct content is shown to a logged out user', () => {
+    const handleLike = vi.fn()
+    const removeBlog = vi.fn()
+    render(<Blog blog={blog} handleLike={handleLike} removeBlog={removeBlog} username={null} />)
+    expect(screen.getByText('Michael Chan: React patterns')).toBeVisible()
+    expect(screen.getByText('https://reactpatterns.com')).toBeVisible()
+    expect(screen.getByText('likes 7', { exact: false })).toBeVisible()
+    expect(screen.getByText('Jack Jackson', { exact: false })).toBeVisible()
+    expect(screen.queryAllByRole('button').length).toEqual(0)
+  })
+
+  test('a logged in user who did not add the blog can see the like button but not the remove button', () => {
+    const handleLike = vi.fn()
+    const removeBlog = vi.fn()
+    render(<Blog blog={blog} handleLike={handleLike} removeBlog={removeBlog} username={'Matty'} />)
+    expect(screen.getByRole('button', { name: 'like' })).toBeVisible()
+    expect(screen.queryByRole('button', { name: 'remove' })).toBeNull()
+  })
+
+  test('a logged in user who added the blog can see both the like button and the remove button', () => {
+    const handleLike = vi.fn()
+    const removeBlog = vi.fn()
+    render(<Blog blog={blog} handleLike={handleLike} removeBlog={removeBlog} username={username} />)
+    expect(screen.getByRole('button', { name: 'like' })).toBeVisible()
+    expect(screen.getByRole('button', { name: 'remove' })).toBeVisible()
+  })
 })
