@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Box, Button } from '@mui/material'
 
 const Blog = ({ blog, handleLike, username, removeBlog }) => {
   const handleRemoval = () => {
@@ -8,16 +8,24 @@ const Blog = ({ blog, handleLike, username, removeBlog }) => {
   if (!blog) return null
 
   return (
-    <div>
+    <Box sx={{ border: 1, padding: 1 }}>
       <h2>
-        {blog.author}: {blog.title}
+        {blog.title}
       </h2>
-      <a href={blog.url}>{blog.url}</a><br />
-      likes {blog.likes}{username && <button onClick={() => handleLike(blog)}>like</button>}<br />
-      Added by {blog.user.name}<br />
-      {(blog.user.username === username)
-      && <button onClick={handleRemoval}>remove</button>}
-    </div>
+      <div style={{padding: '10px 10px 10px 0px'}}>
+        by {blog.author}<br/>
+      </div>
+      <a href={blog.url} style={{padding: '10px 10px 10px 0px'}}>{blog.url}</a><br />
+      <div style={{padding: '10px 10px 10px 0px'}}>
+        Added by {blog.user.name}<br />
+      </div>
+      <div>
+        {blog.likes} likes
+        {username && <Button onClick={() => handleLike(blog)} variant='contained' color='success' style={{margin: 10}}>like</Button>}
+        {(blog.user.username === username)
+        && <Button onClick={handleRemoval} variant='contained' color='error'>remove</Button>}
+      </div>
+    </Box>
   )
 }
 
