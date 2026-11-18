@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, Route, Routes, useNavigate, useMatch } from 'react-router-dom'
+import { Container, TextField, Button } from '@mui/material'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -96,7 +97,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Container>
       <div>
         <Link style={pad} to='/'>blogs</Link>
         {!user && <Link style={pad} to='/login'>login</Link>}
@@ -128,27 +129,23 @@ const App = () => {
             <h2>Log in to application</h2>
             {message && <Notification message={message} color={messageColor} />}
             <form onSubmit={handleLogin}>
+              <TextField
+                label='username'
+                value={username}
+                onChange={({ target }) => setUsername(target.value)}
+              />
+              <br/>
+              <TextField
+                label='password'
+                type='password'
+                value={password}
+                onChange={({ target }) => setPassword(target.value)}
+              />
               <div>
-                <label>
-                  username
-                  <input
-                    type='text'
-                    value={username}
-                    onChange={({ target }) => setUsername(target.value)}
-                  />
-                </label>
+                <Button type='submit' variant='contained'>
+                  login
+                </Button>
               </div>
-              <div>
-                <label>
-                  password
-                  <input
-                    type='password'
-                    value={password}
-                    onChange={({ target }) => setPassword(target.value)}
-                  />
-                </label>
-              </div>
-              <button type='submit'>login</button>
             </form>
           </div>
         } />
@@ -156,7 +153,7 @@ const App = () => {
           <Blog blog={blog} handleLike={handleLike} username={user ? user.username : null} removeBlog={removeBlog} />
         } />
       </Routes>
-    </div>
+    </Container>
   )
 }
 
