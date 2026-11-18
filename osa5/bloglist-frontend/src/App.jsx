@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, Route, Routes, useNavigate, useMatch } from 'react-router-dom'
-import { Container, TextField, Button } from '@mui/material'
+import { Container, TextField, Button, AppBar, Toolbar } from '@mui/material'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -98,12 +98,14 @@ const App = () => {
 
   return (
     <Container>
-      <div>
-        <Link style={pad} to='/'>blogs</Link>
-        {!user && <Link style={pad} to='/login'>login</Link>}
-        {user && <Link style={pad} to='/create'>create</Link>}
-        {user && <button onClick={handleLogout}>logout</button>}
-      </div>
+      <AppBar position='static'>
+        <Toolbar>
+          <Button color='inherit' component={Link} to='/' style={pad}>blogs</Button>
+          {!user && <Button color='inherit' component={Link} to='/login' style={pad}>login</Button>}
+          {user && <Button color='inherit' component={Link} to='/create' style={pad}>create</Button>}
+          {user && <Button color='inherit' onClick={handleLogout}>logout</Button>}
+        </Toolbar>
+      </AppBar>
       <Routes>
         <Route path='/' element={
           <div>
